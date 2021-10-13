@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"time"
 
 	pb "github.com/fudute/proto_idl/helloservice"
@@ -16,7 +17,12 @@ type HelloService struct {
 }
 
 func (*HelloService) Hello(ctx context.Context, req *pb.HelloRequest) (reply *pb.HelloReply, err error) {
-	reply = &pb.HelloReply{Message: fmt.Sprintf("Hello %s, %s", req.Name, time.Now())}
+	hostname, err := os.Hostname()
+	if err != nil {
+		hostname = "Unknow host name"
+		log.Println("unable to get hostname")
+	}
+	reply = &pb.HelloReply{Message: fmt.Sprintf("Hello %s, from %s at %s", req.Name, hostname, time.Now())}
 	return
 }
 
